@@ -464,13 +464,32 @@ namespace VAGSuite
                         sh.Y_axis_correction = 0.01; 
                         sh.Correction = 0.023437;
                         sh.X_axis_descr = "Engine speed (rpm)";
-                        //sh.Y_axis_descr = "Airflow mg/stroke";
                         sh.Y_axis_descr = "Requested Quantity mg/stroke";
-
                         sh.Z_axis_descr = "Duration (crankshaft degrees)";
                         sh.XaxisUnits = "rpm";
                         sh.YaxisUnits = "mg/st";
                     }
+                    else if (sh.X_axis_ID / 256 == 0xC4 && sh.Y_axis_ID / 256 == 0xEA)
+                    {
+
+                        sh.Category = "Detected maps";
+                        sh.Subcategory = "Fuel";
+                        int injDurCount = GetMapNameCountForCodeBlock("Injector duration", sh.CodeBlock, newSymbols, false);
+                        injDurCount--;
+                        //if (injDurCount < 1) injDurCount = 1;
+                        //IAT, ECT or Fuel temp?
+
+                        double tempRange = GetTemperatureDurRange(injDurCount - 1);
+                        sh.Varname = "Injector duration " + injDurCount.ToString("D2") + " [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";// " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
+                        sh.Y_axis_correction = 0.01;
+                        sh.Correction = 0.023437;
+                        sh.X_axis_descr = "Engine speed (rpm)";
+                        sh.Y_axis_descr = "Requested Quantity mg/stroke";
+                        sh.Z_axis_descr = "Duration (crankshaft degrees)";
+                        sh.XaxisUnits = "rpm";
+                        sh.YaxisUnits = "mg/st";
+                    }
+
                 }
                 else if (sh.Length == 448)
                 {
@@ -726,8 +745,6 @@ namespace VAGSuite
                     // 15x12 = inj dur limiter on R3 files
                     if (sh.X_axis_length == 13 && sh.Y_axis_length == 15)
                     {
-                        //if (!MapContainsNegativeValues(allBytes, sh))
-                        {
                            /* sh.Category = "Detected maps";
                             sh.Subcategory = "Limiters";
                             sh.Varname = "Injection duration limiter B [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";// " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
@@ -753,10 +770,24 @@ namespace VAGSuite
 
                             sh.Z_axis_descr = "Duration (crankshaft degrees)";
                             sh.XaxisUnits = "rpm";
-                            sh.YaxisUnits = "mg/st";
-
-                        }
+                            sh.YaxisUnits = "mg/st";                      
                     }
+
+                    else if ((sh.X_axis_ID / 256 == 0xEC) && (sh.Y_axis_ID / 256 == 0xC0))
+                    {
+                        sh.Category = "Detected maps";
+                        sh.Subcategory = "Misc";
+                        int egrCount = GetMapNameCountForCodeBlock("EGR", sh.CodeBlock, newSymbols, false);
+                        sh.Varname = "EGR " + egrCount.ToString("D2") + " [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";
+                        sh.Correction = 0.1;
+                        sh.X_axis_correction = 0.01;
+                        sh.Z_axis_descr = "Mass Air Flow (mg/stroke)";
+                        sh.X_axis_descr = "IQ (mg/stroke)";
+                        sh.Y_axis_descr = "Engine speed (rpm)";
+                        sh.YaxisUnits = "rpm";
+                        sh.XaxisUnits = "mg/st";
+                    }
+
                 }
                 else if (sh.Length == 384)
                 {
@@ -826,18 +857,6 @@ namespace VAGSuite
                     // 15x12 = inj dur limiter on R3 files
                     if (sh.X_axis_length == 12 && sh.Y_axis_length == 15)
                     {
-                        //if (!MapContainsNegativeValues(allBytes, sh))
-                        {
-                            /*sh.Category = "Detected maps";
-                            sh.Subcategory = "Limiters";
-                            sh.Varname = "Injection duration limiter A [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";// " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
-                            sh.Correction = 0.023438;
-                            sh.Y_axis_correction = 0.01;
-                            sh.Y_axis_descr = "IQ (mg/stroke)";
-                            sh.Z_axis_descr = "Max. degrees";
-                            sh.X_axis_descr = "Engine speed (rpm)";
-                            sh.XaxisUnits = "rpm";
-                            sh.YaxisUnits = "mg/st";*/
                             sh.Category = "Detected maps";
                             sh.Subcategory = "Fuel";
                             int injDurCount = GetMapNameCountForCodeBlock("Injector duration", sh.CodeBlock, newSymbols, false);
@@ -853,10 +872,9 @@ namespace VAGSuite
 
                             sh.Z_axis_descr = "Duration (crankshaft degrees)";
                             sh.XaxisUnits = "rpm";
-                            sh.YaxisUnits = "mg/st";
-
-                        }
+                            sh.YaxisUnits = "mg/st";                   
                     }
+                    
                 }
                 else if (sh.Length == 352)
                 {
