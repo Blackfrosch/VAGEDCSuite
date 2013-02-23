@@ -950,27 +950,6 @@ namespace VAGSuite
                         sh.XaxisUnits = "mbar";
                     }
 
-                    if (sh.X_axis_ID / 256 == 0xDA && sh.Y_axis_ID / 256 == 0xDA)
-                    {
-                        sh.Category = "Detected maps";
-                        //sh.Subcategory = "Limiters";
-                        //sh.Varname = "Boost map [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "] " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
-                        //sh.X_axis_descr = "Temperature"; //TODO: IAT???
-                        sh.X_axis_correction = 0.1;
-                        sh.X_axis_offset = -273.1;
-                        sh.XaxisUnits = "°C";
-                        sh.Subcategory = "Limiters";
-                        sh.Varname = "Boost correction by temperature [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";// " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
-                        sh.X_axis_descr = "IAT (celcius)";
-                        sh.Y_axis_descr = "Requested boost";
-                        sh.Z_axis_descr = "Boost limit (mbar)";
-                        sh.YaxisUnits = "mbar";
-                        
-
-                    }
-                    //sh.Correction = 0.01;
-                    //sh.Y_axis_correction = 0.01;
-
                 }
                 else if (sh.Length == 308)
                 {
@@ -1726,7 +1705,22 @@ namespace VAGSuite
                         }
                     }
                 }
+                if (sh.X_axis_ID == 0xDA6C && sh.Y_axis_ID == 0xDA6A)
+                {
+                    sh.Category = "Detected maps";
+                    sh.X_axis_correction = 0.1;
+                    sh.X_axis_offset = -273.1;
+                    sh.XaxisUnits = "°C";
+                    sh.Subcategory = "Limiters";
+                    sh.Varname = "Boost correction by temperature [" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";// " + sh.Flash_start_address.ToString("X8") + " " + sh.X_axis_ID.ToString("X4") + " " + sh.Y_axis_ID.ToString("X4");
+                    sh.X_axis_descr = "IAT (celcius)";
+                    sh.Y_axis_descr = "Requested boost";
+                    sh.Z_axis_descr = "Boost limit (mbar)";
+                    sh.YaxisUnits = "mbar";
+                }
             }
+
+
 
         }
 
@@ -1866,10 +1860,12 @@ namespace VAGSuite
             try
             {
                 int endOfTable = Convert.ToInt32(allBytes[offset + 0x01000]) + Convert.ToInt32(allBytes[offset + 0x01001]) * 256 + offset;
-                int codeBlockAddress = Convert.ToInt32(allBytes[offset + 0x01002]) + Convert.ToInt32(allBytes[offset + 0x01003]) * 256 + offset;
-                if (endOfTable == offset + 0xC3C3) return 0;
                 //sth wrong here with File 019AQ (ARL)
+                int codeBlockAddress = Convert.ToInt32(allBytes[offset + 0x01002]) + Convert.ToInt32(allBytes[offset + 0x01003]) * 256 + offset;
+                if (endOfTable == offset + 0xC3C3) return 0;               
                 codeBlockID = Convert.ToInt32(allBytes[codeBlockAddress]) + Convert.ToInt32(allBytes[codeBlockAddress + 1]) * 256;
+                //Why do we need line obove?
+                //codeBlockID = Convert.ToInt32(allBytes[codeBlockAddress]);
 
                 foreach (CodeBlock cb in newCodeBlocks)
                 {
