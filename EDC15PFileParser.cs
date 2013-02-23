@@ -1618,6 +1618,26 @@ namespace VAGSuite
                         }
                     }
                 }
+                else if (sh.Length >= 18 && sh.Length <= 70)
+                {
+                    if (sh.X_axis_ID / 16 == 0xC1A && sh.Y_axis_ID / 16 == 0xEC3)
+                    {
+                        
+                        {
+                            sh.Category = "Detected maps";
+                            sh.Subcategory = "Limiters";
+                            //Temp after intercooler
+                            sh.Y_axis_descr = "Temperature";
+                            sh.X_axis_descr = "Engine speed (rpm)"; //IAT, ECT or Fuel temp?
+                            sh.Y_axis_correction = 0.1;
+                            sh.Y_axis_offset = -273.1;
+                            sh.Z_axis_descr = "%";
+                            sh.Correction = 0.01;
+                            sh.Varname = "IQ by air intake temp[" + DetermineNumberByFlashBank(sh.Flash_start_address, newCodeBlocks) + "]";
+                        }
+                    }
+                }
+                
                 else if (sh.Length == 20)
                 {
                     if (sh.Y_axis_length == 5 && sh.X_axis_length == 2)
@@ -1637,6 +1657,7 @@ namespace VAGSuite
                         }
                     }
                 }
+
                 else if (sh.Length == 12)
                 {
                     if (sh.X_axis_length == 6 && sh.Y_axis_length == 1)
@@ -1847,6 +1868,7 @@ namespace VAGSuite
                 int endOfTable = Convert.ToInt32(allBytes[offset + 0x01000]) + Convert.ToInt32(allBytes[offset + 0x01001]) * 256 + offset;
                 int codeBlockAddress = Convert.ToInt32(allBytes[offset + 0x01002]) + Convert.ToInt32(allBytes[offset + 0x01003]) * 256 + offset;
                 if (endOfTable == offset + 0xC3C3) return 0;
+                //sth wrong here with File 019AQ (ARL)
                 codeBlockID = Convert.ToInt32(allBytes[codeBlockAddress]) + Convert.ToInt32(allBytes[codeBlockAddress + 1]) * 256;
 
                 foreach (CodeBlock cb in newCodeBlocks)
@@ -2423,6 +2445,7 @@ namespace VAGSuite
             if (Tools.Instance.m_currentfilelength >= 0x80000)
             {
                 Tools.Instance.m_codeBlock5ID = CheckCodeBlock(0x50000, allBytes, newSymbols, newCodeBlocks); //manual specific
+                //File ARL 019AQ -> CodeBlock ID=5882 appered?
                 Tools.Instance.m_codeBlock6ID = CheckCodeBlock(0x60000, allBytes, newSymbols, newCodeBlocks); //automatic specific
                 Tools.Instance.m_codeBlock7ID = CheckCodeBlock(0x70000, allBytes, newSymbols, newCodeBlocks); //quattro specific
             }

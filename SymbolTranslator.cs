@@ -62,6 +62,10 @@ namespace VAGSuite
             {
                 description = "This map limits the injection quantity for any given intake manifold pressure (boost pressure) and engine speed.";
             }
+            else if (varName.StartsWith("IQ by air intake temp"))
+            {
+                description = "Injection quantity correction map based on air intake temperature (after intercooler!).";
+            }     
             else if (varName.StartsWith("Fuel volume correction map"))
             {
                 description = "Injection quantity correction map based on temperature.";
