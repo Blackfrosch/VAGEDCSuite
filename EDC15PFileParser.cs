@@ -1585,7 +1585,7 @@ namespace VAGSuite
                 {
                     if (sh.Y_axis_length == 6 && sh.X_axis_length == 5)
                     {
-                        if (sh.Y_axis_ID == 0xC1A2)
+                        if (sh.Y_axis_ID == 0xC1A2 || sh.Y_axis_ID == 0xC1B2)   //alternate Y-axis ID found on South African ATD
                         {
                             sh.Category = "Detected maps";
                             sh.Subcategory = "Misc";
